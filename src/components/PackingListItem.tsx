@@ -1,17 +1,26 @@
-import { Item } from '../interfaces/Iitem.interface';
+import { Item } from '../interfaces/item.interface';
 
 interface ListItemProp {
   item: Item;
+  onRemoveItem: (itemId: number) => void;
+  onTogglePacked: (itemId: number) => void;
 }
 
-export default function PackingListItem({ item }: ListItemProp) {
+function PackingListItem({ item, onRemoveItem, onTogglePacked }: ListItemProp) {
   const { id, description, quantity, packed } = item;
   return (
     <li>
-      <span style={item.packed ? { textDecoration: 'line-through' } : {}}>
-        {id} {description} {quantity} {packed ? 'Packed' : 'Not Packed'}
+      <input
+        type="checkbox"
+        checked={packed}
+        onChange={() => onTogglePacked(id)}
+      />
+      <span style={packed ? { textDecoration: 'line-through' } : {}}>
+        {quantity} {description}
       </span>
-      <button>❌</button>
+      <button onClick={() => onRemoveItem(id)}>❌</button>
     </li>
   );
 }
+
+export default PackingListItem;

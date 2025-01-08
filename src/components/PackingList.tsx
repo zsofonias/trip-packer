@@ -1,20 +1,58 @@
-import { Item } from '../interfaces/Iitem.interface';
+import { useState } from 'react';
+import { Item } from '../interfaces/item.interface';
 import PackingListItem from './PackingListItem';
 
-const initialItems: Item[] = [
-  { id: 1, description: 'Passports', quantity: 2, packed: false },
-  { id: 2, description: 'Socks', quantity: 12, packed: false },
-  { id: 3, description: 'Charger', quantity: 1, packed: true },
-];
+interface PackingListProps {
+  items: Item[];
+  onRemoveItem: (itemId: number) => void;
+  onTogglePacked: (itemId: number) => void;
+  onClearAll: () => void;
+}
 
-function PackingList() {
+function PackingList({
+  items,
+  onRemoveItem,
+  onTogglePacked,
+  onClearAll,
+}: PackingListProps) {
+  const [sortBy, setSortBy] = useState('input');
+
+  let sortedItems;
+
+  if (sortBy === 'input') sortedItems = items;
+  if (sortBy === 'description')
+    sortedItems = items
+      .slice()
+      .sort((a, b) => a.description.localeCompare(b.description));
+  if (sortBy === 'packed')
+    sortedItems = items
+      .slice()
+      .sort((a, b) => Number(a.packed) - Number(b.packed));
+
   return (
     <div className="list">
       <ul>
-        {initialItems.map((item) => {
-          return <PackingListItem key={item.id} item={item} />;
-        })}
+        {sortedItems &&
+          sortedItems.map((item: Item) => {
+            return (
+              <PackingListItem
+                key={item.id}
+                item={item}
+                onRemoveItem={onRemoveItem}
+                onTogglePacked={onTogglePacked}
+              />
+            );
+          })}
       </ul>
+
+      <div className="actions">
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+        <button onClick={onClearAll}>Clear List</button>
+      </div>
     </div>
   );
 }

@@ -1,9 +1,13 @@
 import { FormEvent, useState } from 'react';
-import { Item } from '../interfaces/Iitem.interface';
+import { Item } from '../interfaces/item.interface';
+
+interface FormProps {
+  onAddItem: (item: Item) => void;
+}
 
 const optionValues = Array.from({ length: 20 }, (_, idx) => idx + 1);
 
-export default function Form() {
+function Form({ onAddItem }: FormProps) {
   const [itemDescription, setItemDescription] = useState('');
   const [itemQuantity, setItemQuantity] = useState(1);
 
@@ -24,7 +28,7 @@ export default function Form() {
       id: Date.now(),
     };
 
-    console.log(newItem);
+    onAddItem(newItem);
 
     resetForm();
   }
@@ -59,3 +63,5 @@ export default function Form() {
     </form>
   );
 }
+
+export default Form;
